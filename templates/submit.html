@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Submit Request</title>
+    <style>
+        body {
+            margin: 10;
+            padding: 5;
+            font-family: Arial, sans-serif;
+            background-color: #A7BEAE;
+        }
+
+        .header {
+            background-color: #ec5e41b1;
+            color: rgba(225, 66, 66, 0.525);
+            border: 3px solid #e25a3fc3;
+            box-shadow: 2px 3px 10px rgba(205, 92, 61, 0.525);
+            text-align: center;
+            padding: 1rem 0;
+            border-radius: 5px
+        }
+
+        .title {
+            font-size: 2rem;
+            margin: 6px;
+            color: #f6f9f7;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .form-container {
+
+            margin-top: 60px;
+            /* Add top margin for space between header and form */
+            text-align: left;
+            align-items: center;
+        }
+
+        input {
+            /* margin-top: 50px; */
+            align-items: center;
+            margin: 5px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        #issue_input {
+            width: 100%;
+            height: 200px; /* Set the height for the first textarea */
+            border: 2px solid #912f2098;
+            border-radius: 5px;
+            color: #333;
+            padding: 5px;
+            margin-bottom: 100px;
+            margin: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+
+        #email_input {
+            width: 100%;
+            height: 50px; /* Set the height for the first textarea */
+            border: 2px solid #912f2098;
+            border-radius: 5px;
+            color: #333;
+            padding: 5px;
+            margin-top: 80px;
+            margin: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+
+        textarea::placeholder {
+            color: #d16d6dc8;
+            font-style: italic;
+            font-size: 18px;
+        }
+
+        #urgency_input {
+            width: 100%;
+            height: 50px; /* Set the height for the first textarea */
+            border: 2px solid #912f2098;
+            border-radius: 5px;
+            color: #7a3a2db1;
+            padding: 5px;
+            margin: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+        }
+
+        form {
+            background-color: #E7E8D1;
+            border: 2px solid #090a12;
+            padding: 20px;
+            border-radius: 5px;
+            width: 520px;
+            height: 550px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #634747;
+            border-radius: 3px;
+            box-sizing: border-box;
+            /* Add this line */
+        }
+
+        button[type="submit"] {
+            background-color: #A7BEAE;
+            color: #2b2020;
+            padding: 10px 20px;
+            border:  2px solid #2b2020;
+            height: 50px;
+            width: 130px;
+            margin: 5px;
+            border-radius: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
+            font-size: 19px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #c37469;
+        }
+
+        /* Container for centering the button */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            /* Optional: Add some spacing from the form */
+        }
+
+        button[type="table"] {
+            background-color: #E7E8D1;
+            color: #2b2020;
+            padding: 10px 20px;
+            border:  2px solid #2b2020;
+            border-radius: 3px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 640;
+            font-size: 19px;
+            cursor: pointer;
+        }
+
+        button[type="table"]:hover {
+            background-color: #c37469;
+            /* Change the hover background color */
+        }
+
+        /* Customize font design for text within the form */
+        form input,
+        form textarea {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+        }
+
+        /* Make the prompts (labels) bold */
+        form label {
+            font-size: 19px;
+            font-weight: bold;
+            color: #634747;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="header">
+        <!-- <h1 class="title" style="color: #000000;">Submit a Suggestion for Hawk Improvement</h1> -->
+        <h1 class="title">Submit a Suggestion for Hawk Improvement</h1>
+
+    </div>
+
+    <div class="form-container">
+        <form method="POST" action="/submit">
+            <br>
+            <label for="issue">Issue:</label>
+            <textarea id="issue_input" name="issue" placeholder="Provide details on the issue."></textarea>
+            <br>
+            <br>
+            <label for="email">Email:</label>
+            <textarea id="email_input" name="email" placeholder="Enter your email." required></textarea>
+            <br>
+            <br>
+            <!-- <label for="remarks">Remarks:</label>
+        <textarea name="remarks" rows="5" required></textarea>
+        <br> -->
+            <label for="urgency">Urgency:</label>
+            <select  id="urgency_input" name="urgency" required>
+                <option value="LOW">LOW</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="HIGH">HIGH</option>
+            </select>
+            <br>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div class="button-container">
+        <button type="table" onclick="window.location.href='/'">All Issues</button>
+    </div>
+</body>
+
+</html>

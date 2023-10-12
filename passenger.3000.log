@@ -1,0 +1,125 @@
+[ N 2023-08-09 16:52:05.9280 2684128/T1 age/Wat/WatchdogMain.cpp:1377 ]: Starting Passenger watchdog...
+[ N 2023-08-09 16:52:05.9433 2684131/T1 age/Cor/CoreMain.cpp:1340 ]: Starting Passenger core...
+[ N 2023-08-09 16:52:05.9434 2684131/T1 age/Cor/CoreMain.cpp:256 ]: Passenger core running in multi-application mode.
+[ N 2023-08-09 16:52:06.0013 2684131/T1 age/Cor/CoreMain.cpp:1015 ]: Passenger core online, PID 2684131
+2023/08/09 16:52:08 [error] 2684153#0: *4 "/home/netan-celcom-my/elmalie/hawk-tracker/public/index.html" is not found (2: No such file or directory), client: 127.0.0.1, server: _, request: "HEAD / HTTP/1.1", host: "0.0.0.0"
+[ N 2023-08-09 16:52:08.9177 2684131/T5 age/Cor/SecurityUpdateChecker.h:519 ]: Security update check: no update found (next check in 24 hours)
+
+[ N 2023-08-09 16:52:14.5082 2684131/T8 age/Cor/CoreMain.cpp:671 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ N 2023-08-09 16:52:14.5083 2684131/T1 age/Cor/CoreMain.cpp:1246 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ N 2023-08-09 16:52:14.5083 2684131/T8 Ser/Server.h:902 ]: [ServerThr.1] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5083 2684131/T8 Ser/Server.h:558 ]: [ServerThr.1] Shutdown finished
+[ N 2023-08-09 16:52:14.5083 2684131/Ta Ser/Server.h:902 ]: [ServerThr.2] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5083 2684131/Tg Ser/Server.h:902 ]: [ServerThr.5] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5083 2684131/To Ser/Server.h:902 ]: [ServerThr.9] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Tc Ser/Server.h:902 ]: [ServerThr.3] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Ta Ser/Server.h:558 ]: [ServerThr.2] Shutdown finished
+[ N 2023-08-09 16:52:14.5084 2684131/Tq Ser/Server.h:902 ]: [ServerThr.10] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Te Ser/Server.h:902 ]: [ServerThr.4] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Ti Ser/Server.h:902 ]: [ServerThr.6] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Tg Ser/Server.h:558 ]: [ServerThr.5] Shutdown finished
+[ N 2023-08-09 16:52:14.5084 2684131/Tm Ser/Server.h:902 ]: [ServerThr.8] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Tk Ser/Server.h:902 ]: [ServerThr.7] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/To Ser/Server.h:558 ]: [ServerThr.9] Shutdown finished
+[ N 2023-08-09 16:52:14.5084 2684131/Ts Ser/Server.h:902 ]: [ServerThr.11] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Tc Ser/Server.h:558 ]: [ServerThr.3] Shutdown finished
+[ N 2023-08-09 16:52:14.5084 2684131/Tw Ser/Server.h:902 ]: [ServerThr.13] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Tq Ser/Server.h:558 ]: [ServerThr.10] Shutdown finished
+[ N 2023-08-09 16:52:14.5084 2684131/T10 Ser/Server.h:902 ]: [ServerThr.15] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Te Ser/Server.h:558 ]: [ServerThr.4] Shutdown finished
+[ N 2023-08-09 16:52:14.5084 2684131/Ty Ser/Server.h:902 ]: [ServerThr.14] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5085 2684131/T1k Ser/Server.h:902 ]: [ApiServer] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/T14 Ser/Server.h:902 ]: [ServerThr.17] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5084 2684131/Ti Ser/Server.h:558 ]: [ServerThr.6] Shutdown finished
+[ N 2023-08-09 16:52:14.5084 2684131/T1e Ser/Server.h:902 ]: [ServerThr.22] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5085 2684131/Tm Ser/Server.h:558 ]: [ServerThr.8] Shutdown finished
+[ N 2023-08-09 16:52:14.5085 2684131/Tk Ser/Server.h:558 ]: [ServerThr.7] Shutdown finished
+[ N 2023-08-09 16:52:14.5085 2684131/T1i Ser/Server.h:902 ]: [ServerThr.24] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5085 2684131/Ts Ser/Server.h:558 ]: [ServerThr.11] Shutdown finished
+[ N 2023-08-09 16:52:14.5085 2684131/T12 Ser/Server.h:902 ]: [ServerThr.16] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5085 2684131/T1g Ser/Server.h:902 ]: [ServerThr.23] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5085 2684131/Tw Ser/Server.h:558 ]: [ServerThr.13] Shutdown finished
+[ N 2023-08-09 16:52:14.5085 2684131/T1a Ser/Server.h:902 ]: [ServerThr.20] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5085 2684131/T10 Ser/Server.h:558 ]: [ServerThr.15] Shutdown finished
+[ N 2023-08-09 16:52:14.5085 2684131/Tu Ser/Server.h:902 ]: [ServerThr.12] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5085 2684131/Ty Ser/Server.h:558 ]: [ServerThr.14] Shutdown finished
+[ N 2023-08-09 16:52:14.5085 2684131/T1k Ser/Server.h:558 ]: [ApiServer] Shutdown finished
+[ N 2023-08-09 16:52:14.5085 2684131/T1c Ser/Server.h:902 ]: [ServerThr.21] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5086 2684131/T14 Ser/Server.h:558 ]: [ServerThr.17] Shutdown finished
+[ N 2023-08-09 16:52:14.5086 2684131/T1e Ser/Server.h:558 ]: [ServerThr.22] Shutdown finished
+[ N 2023-08-09 16:52:14.5086 2684131/T16 Ser/Server.h:902 ]: [ServerThr.18] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5086 2684131/T1i Ser/Server.h:558 ]: [ServerThr.24] Shutdown finished
+[ N 2023-08-09 16:52:14.5086 2684131/T12 Ser/Server.h:558 ]: [ServerThr.16] Shutdown finished
+[ N 2023-08-09 16:52:14.5086 2684131/T1g Ser/Server.h:558 ]: [ServerThr.23] Shutdown finished
+[ N 2023-08-09 16:52:14.5086 2684131/T1a Ser/Server.h:558 ]: [ServerThr.20] Shutdown finished
+[ N 2023-08-09 16:52:14.5086 2684131/Tu Ser/Server.h:558 ]: [ServerThr.12] Shutdown finished
+[ N 2023-08-09 16:52:14.5087 2684131/T1c Ser/Server.h:558 ]: [ServerThr.21] Shutdown finished
+[ N 2023-08-09 16:52:14.5087 2684131/T16 Ser/Server.h:558 ]: [ServerThr.18] Shutdown finished
+[ N 2023-08-09 16:52:14.5087 2684131/T18 Ser/Server.h:902 ]: [ServerThr.19] Freed 0 spare client objects
+[ N 2023-08-09 16:52:14.5087 2684131/T18 Ser/Server.h:558 ]: [ServerThr.19] Shutdown finished
+[ N 2023-08-09 16:52:15.5449 2684131/T1 age/Cor/CoreMain.cpp:1325 ]: Passenger core shutdown finished
+[ N 2023-08-09 16:53:04.9920 2684467/T1 age/Wat/WatchdogMain.cpp:1377 ]: Starting Passenger watchdog...
+[ N 2023-08-09 16:53:05.0074 2684470/T1 age/Cor/CoreMain.cpp:1340 ]: Starting Passenger core...
+[ N 2023-08-09 16:53:05.0075 2684470/T1 age/Cor/CoreMain.cpp:256 ]: Passenger core running in multi-application mode.
+[ N 2023-08-09 16:53:05.0698 2684470/T1 age/Cor/CoreMain.cpp:1015 ]: Passenger core online, PID 2684470
+App 2684566 output: /bin/sh: /home/netan-celcom-my/elmalie/hawk-tracker/{"version"=>"3.11.4", "executable"=>"/home/netan-celcom-my/miniconda3/envs/hawk-tracker/bin/python"}: No such file or directory
+[ E 2023-08-09 16:53:07.2763 2684470/T1n age/Cor/App/Implementation.cpp:221 ]: Could not spawn process for application /home/netan-celcom-my/elmalie/hawk-tracker: The application process exited prematurely.
+  Error ID: 8940cd27
+  Error details saved to: /tmp/passenger-error-FCvyKt.html
+
+[ E 2023-08-09 16:53:07.2800 2684470/T8 age/Cor/Con/CheckoutSession.cpp:283 ]: [Client 1-1] Cannot checkout session because a spawning error occurred. The identifier of the error is 8940cd27. Please see earlier logs for details about the error.
+[ N 2023-08-09 16:53:12.8884 2684470/T5 age/Cor/SecurityUpdateChecker.h:519 ]: Security update check: no update found (next check in 24 hours)
+
+[ N 2023-08-09 16:55:24.6216 2684470/T8 age/Cor/CoreMain.cpp:671 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ N 2023-08-09 16:55:24.6216 2684470/T1 age/Cor/CoreMain.cpp:1246 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ N 2023-08-09 16:55:24.6217 2684470/T8 Ser/Server.h:902 ]: [ServerThr.1] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/T8 Ser/Server.h:558 ]: [ServerThr.1] Shutdown finished
+[ N 2023-08-09 16:55:24.6217 2684470/Ta Ser/Server.h:902 ]: [ServerThr.2] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/Tg Ser/Server.h:902 ]: [ServerThr.5] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/Tc Ser/Server.h:902 ]: [ServerThr.3] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/Te Ser/Server.h:902 ]: [ServerThr.4] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/Ta Ser/Server.h:558 ]: [ServerThr.2] Shutdown finished
+[ N 2023-08-09 16:55:24.6217 2684470/Ts Ser/Server.h:902 ]: [ServerThr.11] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/Tu Ser/Server.h:902 ]: [ServerThr.12] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/Tg Ser/Server.h:558 ]: [ServerThr.5] Shutdown finished
+[ N 2023-08-09 16:55:24.6217 2684470/Ti Ser/Server.h:902 ]: [ServerThr.6] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6217 2684470/Tk Ser/Server.h:902 ]: [ServerThr.7] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/Tc Ser/Server.h:558 ]: [ServerThr.3] Shutdown finished
+[ N 2023-08-09 16:55:24.6218 2684470/Tk Ser/Server.h:558 ]: [ServerThr.7] Shutdown finished
+[ N 2023-08-09 16:55:24.6217 2684470/Tm Ser/Server.h:902 ]: [ServerThr.8] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/Tw Ser/Server.h:902 ]: [ServerThr.13] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/Te Ser/Server.h:558 ]: [ServerThr.4] Shutdown finished
+[ N 2023-08-09 16:55:24.6217 2684470/Tq Ser/Server.h:902 ]: [ServerThr.10] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/Ty Ser/Server.h:902 ]: [ServerThr.14] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/T12 Ser/Server.h:902 ]: [ServerThr.16] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/T10 Ser/Server.h:902 ]: [ServerThr.15] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/Ts Ser/Server.h:558 ]: [ServerThr.11] Shutdown finished
+[ N 2023-08-09 16:55:24.6218 2684470/T14 Ser/Server.h:902 ]: [ServerThr.17] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/Tu Ser/Server.h:558 ]: [ServerThr.12] Shutdown finished
+[ N 2023-08-09 16:55:24.6218 2684470/T1a Ser/Server.h:902 ]: [ServerThr.20] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/T1c Ser/Server.h:902 ]: [ServerThr.21] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6218 2684470/Ti Ser/Server.h:558 ]: [ServerThr.6] Shutdown finished
+[ N 2023-08-09 16:55:24.6218 2684470/Tm Ser/Server.h:558 ]: [ServerThr.8] Shutdown finished
+[ N 2023-08-09 16:55:24.6218 2684470/T18 Ser/Server.h:902 ]: [ServerThr.19] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6219 2684470/Tw Ser/Server.h:558 ]: [ServerThr.13] Shutdown finished
+[ N 2023-08-09 16:55:24.6219 2684470/T1e Ser/Server.h:902 ]: [ServerThr.22] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6219 2684470/Tq Ser/Server.h:558 ]: [ServerThr.10] Shutdown finished
+[ N 2023-08-09 16:55:24.6219 2684470/T1i Ser/Server.h:902 ]: [ServerThr.24] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6219 2684470/Ty Ser/Server.h:558 ]: [ServerThr.14] Shutdown finished
+[ N 2023-08-09 16:55:24.6219 2684470/T12 Ser/Server.h:558 ]: [ServerThr.16] Shutdown finished
+[ N 2023-08-09 16:55:24.6219 2684470/T10 Ser/Server.h:558 ]: [ServerThr.15] Shutdown finished
+[ N 2023-08-09 16:55:24.6219 2684470/T14 Ser/Server.h:558 ]: [ServerThr.17] Shutdown finished
+[ N 2023-08-09 16:55:24.6219 2684470/T16 Ser/Server.h:902 ]: [ServerThr.18] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6219 2684470/T1a Ser/Server.h:558 ]: [ServerThr.20] Shutdown finished
+[ N 2023-08-09 16:55:24.6219 2684470/T1c Ser/Server.h:558 ]: [ServerThr.21] Shutdown finished
+[ N 2023-08-09 16:55:24.6220 2684470/T18 Ser/Server.h:558 ]: [ServerThr.19] Shutdown finished
+[ N 2023-08-09 16:55:24.6217 2684470/To Ser/Server.h:902 ]: [ServerThr.9] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6220 2684470/T1g Ser/Server.h:902 ]: [ServerThr.23] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6220 2684470/T1e Ser/Server.h:558 ]: [ServerThr.22] Shutdown finished
+[ N 2023-08-09 16:55:24.6220 2684470/T1i Ser/Server.h:558 ]: [ServerThr.24] Shutdown finished
+[ N 2023-08-09 16:55:24.6220 2684470/T16 Ser/Server.h:558 ]: [ServerThr.18] Shutdown finished
+[ N 2023-08-09 16:55:24.6220 2684470/To Ser/Server.h:558 ]: [ServerThr.9] Shutdown finished
+[ N 2023-08-09 16:55:24.6221 2684470/T1g Ser/Server.h:558 ]: [ServerThr.23] Shutdown finished
+[ N 2023-08-09 16:55:24.6221 2684470/T1k Ser/Server.h:902 ]: [ApiServer] Freed 0 spare client objects
+[ N 2023-08-09 16:55:24.6221 2684470/T1k Ser/Server.h:558 ]: [ApiServer] Shutdown finished
+[ N 2023-08-09 16:55:25.7075 2684470/T1 age/Cor/CoreMain.cpp:1325 ]: Passenger core shutdown finished

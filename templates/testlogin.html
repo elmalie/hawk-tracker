@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Table Example</title>
+    <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+    <style>
+        #login-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #login-form {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #login-form form {
+            display: inline-block;
+            border: 2px solid #ddd;
+            padding: 50px; /* Add padding to the form */
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #login-form input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px; /* Increase the padding */
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #login-form input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px; /* Adjust the padding */
+            cursor: pointer;
+        }
+    </style>
+    
+</head>
+<body>
+    
+
+    <!-- Add a Save button -->
+
+    <button id="redirect-button" style="margin-top: 10px;" onclick="redirectToform()">Submit Another Suggestion</button>
+
+    <button id="login-btn">Login</button>
+
+    <!-- Hidden login form -->
+    <div id="login-form">
+        <form action="/admin_login" method="POST"> <!-- Note the updated action URL -->
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
+    <div id="issue_table"></div>
+    <button id="save-button" style="margin-top: 10px; display: none;">Save Changes</button>
+
+    <script src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+    
+    <script>
+
+
+///////////////////////////////////////////////////////////////////////
+        // old code starts from here /////////////////////////////////
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Store the updated data in an array
+            var updatedData = [];
+            // Flag to track whether any changes have been made
+            var changesMade = false;
+
+            // Function to handle cell editing
+            function handleCellEdit(cell) {
+                const field = cell.getField();
+                const oldValue = cell.getOldValue();
+                const newValue = cell.getValue();
+
+                if (newValue !== oldValue) {
+                    // Get the row data and add to the updatedData array
+                    const rowData = cell.getRow().getData();
+                    rowData[field] = newValue;
+                    updatedData.push(rowData);
+
+                    // Set the flag to true when changes are made
+                    changesMade = true;
+
+                    // Show the Save button
+                    document.getElementById('save-button').style.display = 'block';
+                }
+            }
+
+    // Function to apply custom cell colors based on urgency value
+    function applyCellColors(cell) {
+        var value = cell.getValue();
+
+        // Apply color based on the urgency value
+        switch (value) {
+            case "low":
+                return "<div style='background-color: #b3e6b3;'>" + value + "</div>"; // Light green
+            case "medium":
+                return "<div style='background-color: #ffd966;'>" + value + "</div>"; // Light yellow
+            case "high":
+                return "<div style='background-color: #ff9999;'>" + value + "</div>"; // Light red
+            default:
+                return value;
+        }
+    }
+
+            // Fetch the data from the server using an API endpoint
+            fetch('/get_data')
+                .then(response => response.json())
+                .then(data => {
+                    // Create the table using Tabulator
+                    var table = new Tabulator("#issue_table", {
+                        data: data,
+                        layout: "fitColumns",
+                        columns: [
+                            { title: "ID", field: "id" },
+                            {
+                                title: "Urgency",
+                                field: "urgency",
+                                formatter: applyCellColors, // Use the custom formatter function
+                            },
+                            { title: "Date Posted", field: "date_posted" },
+                            { title: "Issue", field: "issue" },
+                            { title: "Email", field: "email" },
+                            {
+                                title: "Remarks (HAWK TEAM)",
+                                field: "remarks",
+                                editor: "input", // Use 'input' editor for editing
+                                cellEdited: handleCellEdit, // Enable editing
+                            },
+                            { title: "Updated", field: "date_updated" },
+                            { title: "Status", field: "status" },
+                            { title: "Complete By", field: "expected_completion" },
+                            
+                        ],
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+
+            // Save button click event
+            document.getElementById('save-button').addEventListener('click', function () {
+                if (changesMade) {
+                    // Send the updated data to the server
+                    fetch('/update_remarks', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Remarks updated successfully.');
+                            // Clear the updatedData array after saving
+                            updatedData = [];
+                            // Set the flag to false after saving
+                            changesMade = false;
+                            // Hide the Save button
+                            document.getElementById('save-button').style.display = 'none';
+                        } else {
+                            console.error('Failed to update remarks.');
+                        }
+                    })
+                    .catch(error => console.error('Error updating remarks:', error));
+                }
+            });      
+
+        });
+
+ 
+
+                // Function to redirect to the new page
+                function redirectToform() {
+                window.location.href = '/';
+            }
+    </script>
+
+
+</body>
+</html>

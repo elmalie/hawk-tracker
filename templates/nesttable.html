@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator_modern.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.11/css/tabulator.min.css" rel="stylesheet"> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.11/js/tabulator.min.js"></script> -->
+
+
+    <script src="https://unpkg.com/tooltip.js@1.3.1/dist/umd/tooltip.min.js"></script>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.0.0/js/tabulator.min.js"></script> -->
+</head>
+
+
+<body>
+
+    <div class="header" style="margin-bottom: 10px;">
+        <h1 class="title" style="color: #fefefe;">Hawk Feedback</h1>
+    </div>
+
+    <div class="comment-form-container" style="display: none;">
+        <form id="comment-form" method="POST" action="/submitComment">
+
+            <input type="hidden" name="issue_id"> <!-- Hidden input field to hold the rowId -->
+            <div class="rowId-bar">
+                <p id="row-id-display"></p>
+            </div>
+            <!-- Element to display  rowId -->
+            <br>
+            <!-- Hidden input element with an id -->
+            <br>
+            <label for="issue">Comments:</label>
+            <textarea name="issue" rows="5" required></textarea>
+            <br>
+            <label for="email">Email:</label>
+            <textarea name="email" rows="1" required></textarea>
+            <br>
+            <br>
+            <button id="submit-comment-button" type="submit">Submit Comment</button>
+            <button id="comment-cancel-button" type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div class="mx-5">
+        <button id="redirect-button" style="margin-top: 10px;" onclick="redirectToform()">Submit Another
+            Issue</button>
+
+        <button id="admin-mode-button" style="margin-top: 10px;">Admin</button>
+
+        <div id="admin-indicator" style="display: none;">Admin Session Activated</div>
+
+        <!-- Hidden login form -->
+        <div id="login-form">
+            <h3>Enter Admin Password</h3>
+            <form id="admin-login-form">
+                <input type="password" name="password" placeholder="Password">
+                <input type="submit" value="Login">
+            </form>
+        </div>
+
+        <!-- <div id="login-result"></div> -->
+        <div class="table-container">
+            <div id="issue_table"></div>
+        </div>
+
+
+        <button id="save-button" style="margin-top: 10px; display: none;">Save Changes</button>
+    </div>
+
+
+    <script src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let isAdminMode = false;  // Declare isAdminMode and initialize it to false
+
+            console.log('In');
+
+
+            // Function to redirect to the new page
+            function redirectToform() {
+                window.location.href = '/submit';
+            }
+
+            // Get the button element by its ID
+            var button = document.getElementById('redirect-button');
+
+            // Add an event listener to the button
+            button.addEventListener('click', redirectToform);
+
+            // Get the button element by its ID
+            var savebutton = document.getElementById('save-button');
+
+            // By default, hide the comment submission form
+            var formContainer = document.querySelector(".comment-form-container");
+            formContainer.style.display = "none";
+
+            // Store the updated data in an array
+            var updatedData = [];
+            // Flag to track whether any changes have been made
+            var changesMade = false;
+
+            const availableTags = ["Bug", "Performance", "Feature",];
+
+
+
+            // Initialize the Tabulator table with non-editable settings
+            var table = new Tabulator("#issue_table", {
+                data: [], // Initial data (can be empty)
+                layout: "fitDataFill",
+                responsiveLayout:"collapse",
+                pagination: true, //enable pagination
+                paginationMode: "local", // "remote" if fetching data from a server
+
+                columns: [
+                {formatter:"responsiveCollapse", width:30, minWidth:30, hozAlign:"center", resizable:false, headerSort:false},
+                    {
+                        title: "Action",
+                        headerSort: false,
+                        formatter: buttonFormatter, // Custom formatter for the button
+                        cellClick: CommentClick,
+                    },
+                    {
+                        title: "ID", field: "id", sorter: "number", width: '4rem', maxWidth: 70, headerFilter: "number", formatter: idFormatter, headerFilterParams: {
+                            negative: false,
+                        },
+                    },
+                    {
+                        title: "Status", field: "status",
+                        titleFormatter: customTitleFormatter,
+                        width: '9rem', maxWidth: 100, headerFilter: "select", headerFilterParams: { values: ["OPEN", "DEVELOPING", "CLOSED"] }, sorter: statusSorter, formatter: customStatusCellFormatter,
+                    },
+                    {
+                        title: "Urgency",
+                        field: "urgency",
+                        titleFormatter: customTitleFormatter,
+
+                        // Use the custom formatter function
+                        width: '6rem',
+                        maxWidth: 110,
+                        formatter: applyCellColors,
+                        headerFilter: "select",
+                        headerFilterParams: { values: ["LOW", "MEDIUM", "HIGH"] },
+                        sorter: urgencySorter,
+
+                    },
+                    {
+                        title: "Tag", field: "tag",
+                        titleFormatter: customTitleFormatter,
+                        width: '9rem',
+                        formatterParams: { fontSize: "12px" }, headerFilter: "select",
+                        headerFilterParams: { values: ['Bug', 'Performance', 'Feature'] },
+                    },
+                    {
+                        title: "Date Posted", field: "date_posted", titleFormatter: customTitleFormatter,
+                        formatter: formatDate, width: '10rem', maxWidth: 95, sorter: dateSorter,
+                        // headerFilter: "date", 
+                    },
+                    {
+                        title: "Issue", field: "issue", titleFormatter: customTitleFormatter,
+                        formatter: "textarea", formatterParams: {
+                            // Additional parameters for the 'textarea' formatter
+                            verticalNavigation: true,
+                            minHeight: 100
+                        }, whiteSpace: "pre-wrap", width: '27rem', maxWidth: 400, headerFilter: "input",
+                    },
+                    {
+                        title: "Email", field: "email", titleFormatter: customTitleFormatter,
+                        formatter: "textarea", width: '16rem', maxWidth: 300, headerFilter: "input",
+                    },
+                    {
+                        title: "Remarks (HAWK TEAM)",
+                        field: "remarks",
+                        titleFormatter: customTitleFormatter,
+                        formatter: "textarea",
+                        width: 250, maxWidth: 400,
+                        headerFilter: "input",
+                        formatter: function (cell, formatterParams, onRendered) {
+                            return '<div style="white-space: pre-wrap;">' + cell.getValue() + '</div>';
+                        },
+                        sorter: "string", // Set the sorter explicitly
+                        htmlOutput: false, // Disable HTML rendering for sorting,
+                        // editor: "input", // Use 'input' editor for editing
+                        // cellEdited: handleCellEdit, // Enable editing
+                    },
+                    {
+                        title: "Updated", field: "date_updated",
+                        titleFormatter: customTitleFormatter,
+                        formatter: formatDate, width: 200, maxWidth: 300, sorter: dateSorter,
+                    },
+                    {
+                        title: "Status", field: "status",
+                        titleFormatter: customTitleFormatter,
+                        width: '9rem', maxWidth: 100, headerFilter: "select", headerFilterParams: { values: ["OPEN", "DEVELOPING", "CLOSED"] }, sorter: statusSorter,
+                    },
+                    {
+                        title: "Complete By", field: "expected_completion",
+                        titleFormatter: customTitleFormatter,
+                        width: 140, maxWidth: 180, formatter: function (cell, formatterParams, onRendered) {
+                            return ""; // Always return an empty string to display a blank cell
+                        }, sorter: dateSorter,
+                    },
+
+                ],
+
+
+
+                dataTree: true, // Enable dataTree functionality
+                dataTreeStartExpanded: true,
+                dataTreeChildField: "comments", // Specify the field containing comments
+                dataTreeChildIndent: 15, // Indentation for nested data
+
+
+                // Enable pagination
+
+                paginationSize: 15,   // Number of rows per page
+                // paginationSizeSelector:true,
+                // Additional pagination options
+                // paginationSizeSelector:[10, 25, 50, 100, true],
+                // columnVisibility: true,  // Enable column visibility toggles
+
+                // Custom callback when column visibility changes
+                columnVisibilityChanged: function (column, visible) {
+                    console.log("Column " + column.getField() + " is now " + (visible ? "visible" : "hidden"));
+                }
+
+            });
+            // Define a custom title formatter function
+            function customTitleFormatter(cell) {
+                // Get the column definition
+                const column = cell.getColumn();
+
+                // Set the title attribute of the header cell to the full header name
+                cell.getElement().setAttribute('title', column.getDefinition().title);
+
+                // Return the standard title formatter result (optional)
+                return column.getDefinition().title;
+            }
+
+            function idFormatter(cell, formatterParams, onRendered, row) {
+                // Check if the row is a parent (not a nested row)
+                var row = cell.getRow();
+                var columnValue = row.getData().urgency;
+
+                if (columnValue == null) {
+                    return '';
+                } else {
+                    return row.getData().id;
+                }
+
+            }
+
+            function buttonFormatter(cell, formatterParams, onRendered) {
+
+                var row = cell.getRow();
+                var columnValue = row.getData().urgency;
+
+                if (columnValue == null) {
+                    return '';
+                } else {
+                    return '<button class="open-comment-form-button" title="View Comments"><i class="fas fa-eye"></i></button>';
+                }
+            }
+
+            // Define a custom cell formatter function
+            function customStatusCellFormatter(cell, formatterParams, onRendered) {
+                const cellValue = cell.getValue();
+
+                // Check the cell's value and set the font color accordingly
+                if (cellValue === "OPEN") {
+                    cell.getElement().style.color = "green"; // Change font color to green for "Open"
+                } else if (cellValue == "CLOSED") {
+                    cell.getElement().style.color = "grey"; // Change font color to grey for "Closed"
+                } else if (cellValue == "DEVELOPING") {
+                    cell.getElement().style.color = "indigo"; // Change font color to grey for "Closed"
+                }
+
+                // Continue with the default cell formatting
+                return cellValue;
+            }
+
+
+            // Toggle the visibility of the form container
+            function CommentClick(e, cell) {
+                // Get the data for the clicked row
+                var rowData = cell.getRow().getData();
+                var rowId = rowData.id;
+
+                var newRoute = "/commentpop?issue_id=" + rowId; // Construct the new route
+
+                // Redirect to the new route with the row data
+                window.location.href = newRoute;
+            };
+
+
+            function formatDate(cell, formatterParams, onRendered) {
+                var date = cell.getValue();
+                if (date) {
+                    var parsedDate = new Date(date);
+                    var formattedDate = parsedDate.toLocaleDateString("en-GB"); // Format as dd/mm/yyyy
+                    return formattedDate;
+                }
+                return "";
+            }
+
+            // Define a custom sorter function for the column
+            function dateSorter(a, b, aRow, bRow, column, dir, sorterParams) {
+                return new Date(a) - new Date(b);
+            }
+
+            // Custom sorter function for urgency levels
+            function urgencySorter(a, b, aRow, bRow, column, dir, sorterParams) {
+                const order = ["LOW", "MEDIUM", "HIGH"];
+                return order.indexOf(a) - order.indexOf(b);
+            }
+
+            // Custom sorter function for Status
+            function statusSorter(a, b, aRow, bRow, column, dir, sorterParams) {
+                const order = ["OPEN", "DEVELOPING", "CLOSED"];
+                return order.indexOf(a) - order.indexOf(b);
+            }
+
+
+            // Function to apply custom cell colors based on urgency value
+            function applyCellColors(cell) {
+                var value = cell.getValue();
+
+                // Apply color based on the urgency value
+                switch (value) {
+                    case "LOW":
+                        return "<div style='background-color: #b3e6b3;'>" + value + "</div>"; // Light green
+                    case "MEDIUM":
+                        return "<div style='background-color: #ffd966;'>" + value + "</div>"; // Light yellow
+                    case "HIGH":
+                        return "<div style='background-color: #ff9999;'>" + value + "</div>"; // Light red
+                    default:
+                        return value;
+                }
+            }
+
+            function applyFontSize(cell, formatterParams) {
+                cell.getElement().style.fontSize = formatterParams.fontSize || '12px';
+                return cell.getValue();
+            }
+
+
+            function fetchDataAndUpdateTable() {
+                fetch('/get_data')
+                    .then(response => response.json())
+                    .then(data => {
+
+                        // Update table data and settings
+                        table.setData(data);
+                        table.setSort("id", "asc");
+
+
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+
+            table.on("tableBuilt", fetchDataAndUpdateTable);
+
+            // Add event listener to the admin button
+            document.getElementById('admin-mode-button').addEventListener('click', function () {
+                // Show the admin login form
+                // document.getElementById('login-form').style.display = 'block';
+                const loginForm = document.getElementById('login-form');
+
+                // Toggle the form's visibility
+                loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Admin login form submit event
+            document.getElementById('admin-login-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Get the password input element within the admin login form
+                const passwordInput = document.querySelector('#admin-login-form input[type="password"]');
+
+                // Get the value of the password entered by the user
+                const password = passwordInput.value;
+
+                // Clear the input field
+                passwordInput.value = '';
+
+                // Send the password to the server for verification
+                fetch('/admin_login', {
+                    method: 'POST',
+                    body: new URLSearchParams({ 'password': password }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Admin mode on');
+                            isAdminMode = true;
+                            // Show the admin indicator
+                            const adminIndicator = document.getElementById('admin-indicator');
+                            adminIndicator.style.display = 'block';
+
+                            // Add admin-mode class to the body element
+                            document.body.classList.add('admin-mode');
+                            // Hide the login form after successful login
+                            document.getElementById('login-form').style.display = 'none';
+                            // Reinitialize the Tabulator table with editable settings
+                            alert('Admin mode activated. You can now edit the table.');
+                            table.destroy(); // Destroy the existing table instance
+                            table = new Tabulator("#issue_table", {
+                                layout: "fitDataFill",
+
+                                columns: [
+                                    // Define your columns here, including the ones you want to make editable
+                                    { title: "ID", field: "id", sorter: "number", width: '4rem', maxWidth: 70, headerFilter: "number", formatter: idFormatter, },
+                                    {
+                                        title: "Status", field: "status",
+                                        titleFormatter: customTitleFormatter,
+                                        editor: "select",
+                                        editorParams: {
+                                            values: ['OPEN', 'DEVELOPING', 'CLOSED']
+                                        },
+                                        cellEdited: handleCellEdit, width: '9rem', maxWidth: 100, headerFilter: "select", headerFilterParams: { values: ['OPEN', 'DEVELOPING', 'CLOSED'] }, sorter: statusSorter,
+                                    },
+                                    {
+                                        title: "Urgency", field: "urgency",
+                                        titleFormatter: customTitleFormatter,
+                                        formatter: applyCellColors, width: '5rem',
+                                        maxWidth: 110, headerFilter: "select",
+                                        headerFilterParams: { values: ["LOW", "MEDIUM", "HIGH"] },
+                                        sorter: urgencySorter, editor: "select",
+                                        editorParams: {
+                                            values: ['LOW', 'MEDIUM', 'HIGH']
+                                        }, cellEdited: handleCellEdit,
+                                    },
+                                    {
+                                        title: "Tag", field: "tag",
+                                        titleFormatter: customTitleFormatter,
+                                        width: '11rem', editor: "list",
+                                        editorParams: {
+                                            multiselect: true,
+                                            values: ['Bug', 'Performance', 'Feature'],
+                                        },
+                                        formatterParams: { fontSize: "12px" }, headerFilter: "select",
+                                        headerFilterParams: { values: ['Bug', 'Performance', 'Feature'] }, cellEdited: handleCellEdit,
+                                    },
+                                    {
+                                        title: "Date Posted", field: "date_posted",
+                                        titleFormatter: customTitleFormatter,
+                                        formatter: formatDate, width: '10rem', maxWidth: 95, sorter: dateSorter,
+                                    },
+                                    {
+                                        title: "Issue", field: "issue",
+                                        titleFormatter: customTitleFormatter,
+                                        formatter: "textarea", formatterParams: {
+                                            // Additional parameters for the 'textarea' formatter
+                                            verticalNavigation: true,
+                                            minHeight: 100 // Specify the minimum height of the textarea
+                                        }, width: '27rem', headerFilter: "input",
+                                    },
+                                    {
+                                        title: "Email", field: "email",
+                                        titleFormatter: customTitleFormatter,
+                                        formatter: "textarea", width: '16rem', maxWidth: 300, headerFilter: "input",
+                                    },
+                                    {
+                                        title: "Remarks (HAWK TEAM)", field: "remarks",
+                                        titleFormatter: customTitleFormatter,
+                                        editor: "input",
+                                        formatter: function (cell, formatterParams, onRendered) {
+                                            return '<div style="white-space: pre-wrap;">' + cell.getValue() + '</div>';
+                                        },
+                                        sorter: "string", // Set the sorter explicitly
+                                        htmlOutput: false, // Disable HTML rendering for sorting,
+                                        cellEdited: handleCellEdit, width: 250, maxWidth: 400, headerFilter: "input",
+                                    },
+                                    {
+                                        title: "Updated", field: "date_updated",
+                                        titleFormatter: customTitleFormatter,
+                                        width: 200, maxWidth: 300, sorter: dateSorter, editor: "input", editorParams: { elementAttributes: { type: "date" } }, cellEdited: handleCellEdit, formatter: formatDate, sorter: dateSorter
+                                    },
+
+                                    {
+                                        title: "Complete By", field: "expected_completion",
+                                        titleFormatter: customTitleFormatter,
+                                        editor: "input", editorParams: { elementAttributes: { type: "date" } },
+                                        cellEdited: handleCellEdit, width: 140, maxWidth: 180, sorter: dateSorter, formatter: function (cell, formatterParams, onRendered) {
+                                            return ""; // Always return an empty string to display a blank cell
+                                        },
+                                    },
+                                ],
+
+
+                                dataTree: true, // Enable dataTree functionality
+                                dataTreeStartExpanded: true,
+                                dataTreeChildField: "comments", // Specify the field containing comments
+                                dataTreeChildIndent: 15, // Indentation for nested data
+
+                                // Enable pagination
+                                pagination: "remote", // "remote" if fetching data from a server
+                                paginationSize: 15,   // Number of rows per page
+
+                                // Additional pagination options
+                                // paginationSizeSelector: [15, 25, 50, 100], // Dropdown to select page size
+
+
+                            });
+                            // Function to handle cell edit
+                            function handleCellEdit(cell) {
+                                console.log('Cell edited');
+                                const field = cell.getField();
+                                const oldValue = cell.getOldValue();
+                                const newValue = cell.getValue();
+
+                                if (newValue !== oldValue) {
+                                    // Get the row data and add to the updatedData array
+                                    const rowData = cell.getRow().getData();
+                                    rowData[field] = newValue;
+                                    rowData.date_updated = new Date().toISOString(); // Set the "Updated" date
+                                    rowData.expected_completion = new Date(rowData.expected_completion).toISOString(); // issue in commiting so i suspect it is not actually in iso so i am forcing it here 
+                                    updatedData.push(rowData);
+                                    changesMade = true; // Set the flag if values are different
+
+                                    savebutton.style.display = 'block';
+                                }
+                            }
+
+
+                            // fetchDataAndUpdateTree();
+                            fetchDataAndUpdateTable(); //old version
+                        } else {
+                            // Display an error message for incorrect password
+                            alert('Incorrect password. Please try again.');
+                        }
+                    })
+
+                    .catch(error => console.error('Error during admin login:', error));
+            });
+
+            savebutton.addEventListener('click', function () {
+                if (changesMade) {
+
+                    fetch('/update_issue_only', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Handle the server response, e.g., display a success message
+                            if (data.success) {
+                                // Refresh the table to reflect the changes
+                                table.redraw(true);
+                                alert('Changes saved successfully.');
+                                updatedData = [];
+                                changesMade = false; // Reset the flag after changes are saved
+                                savebutton.style.display = 'none'; // Hide "Save Changes" button
+                            } else {
+                                alert('Error saving changes for Nested Tree.');
+                            }
+                        })
+                        .catch(error => console.error('Error during data save:', error));
+                }
+            });
+
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("open-comment-form-button")) {
+                    var rowId = e.target.getAttribute("data-row-id");
+
+                    // Toggle the visibility of the form container
+                    var formContainer = document.querySelector(".comment-form-container");
+                    // formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+                    formContainer.style.display = "block"; // Set the form container to be visible
+
+                    // Set the value of the hidden input field "issue_id"
+                    var issueIdInput = formContainer.querySelector("[name='issue_id']");
+                    issueIdInput.value = rowId;
+
+
+
+                    var submitCommentButton = formContainer.querySelector("#submit-comment-button");
+                    submitButton.addEventListener("click", function (event) {
+                        event.preventDefault(); // Prevent the default form submission behavior
+
+                        var row = cell.getRow();
+                        var rowId = row.getData().id; // Get 
+
+                        // Get form data
+                        // var formData = new FormData(document.querySelector("#comment-form"));
+
+                        var formData = {
+                            issue_id: parseInt(rowId), // Convert to integer
+                            issue: document.querySelector("[name='issue']").value,
+                            email: document.querySelector("[name='email']").value,
+                        };
+
+                        // Send form data to Flask backend
+                        fetch("/submitComment", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(formData),
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                // Handle the response from the backend, if needed
+                                console.log("Response from server:", data);
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                            });
+                    });
+                }
+
+            });
+
+            // Handle cancel button click
+            var commentCancelButton = document.getElementById("comment-cancel-button");
+            commentCancelButton.addEventListener("click", function () {
+                var formContainer = document.querySelector(".comment-form-container");
+                formContainer.style.display = "none";
+
+            });
+
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>

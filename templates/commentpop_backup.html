@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator_modern.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.11/css/tabulator.min.css" rel="stylesheet"> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.11/js/tabulator.min.js"></script> -->
+
+
+    <script src="https://unpkg.com/tooltip.js@1.3.1/dist/umd/tooltip.min.js"></script>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.0.0/js/tabulator.min.js"></script> -->
+
+
+</head>
+
+
+<body>
+
+    <div class="header" style="margin-bottom: 10px;">
+        <h1 class="title" style="color: #fefefe;">Hawk Feedback</h1>
+    </div>
+
+
+
+    <div class="mx-5">
+
+        <button type="table" onclick="window.location.href='/'">Back to Issues </button>
+
+        <button id="admin-mode-button" style="margin-top: 10px;">Admin</button>
+
+        <div id="admin-indicator" style="display: none;">Admin Session Activated</div>
+
+        <!-- Hidden login form -->
+        <div id="login-form">
+            <h3>Enter Admin Password</h3>
+            <form id="admin-login-form">
+                <input type="password" name="password" placeholder="Password">
+                <input type="submit" value="Login">
+            </form>
+        </div>
+
+        <!-- ----------------------------------------------------------------------------------------------- -->
+        <!-- ----------------------------------------------------------------------------------------------- -->
+    
+        <br>
+
+        <div id="issue-details">
+            <!-- Issue info will be displayed here -->
+        </div>
+
+        <br>
+        <div class="comment-form-container" style="display: none;">
+            <form id="comment-form" method="POST" action="/submitComment" enctype="multipart/form-data">
+
+                <input type="hidden" name="issue_id"> <!-- Hidden input field to hold the rowId -->
+                <div class="rowId-bar">
+                    <p id="row-id-display"></p>
+                </div>
+                <br>
+                <br>
+                <label for="comment">Comments:</label>
+                <textarea name="comment" rows="5" required></textarea>
+                <br>
+                <label for="email">Email:</label>
+                <textarea name="email" rows="1" required></textarea>
+                <br>
+                <label for="image">Upload Image:</label>
+                <input type="file" name="image" accept=".jpg, .jpeg, .png" multiple>
+                <br>
+                <br>
+                <button id="submit-comment-button" type="submit">Submit Comment</button>
+                <button id="comment-cancel-button" type="button">Cancel</button>
+            </form>
+        </div>
+
+        <!-- <div id="login-result"></div> -->
+        <br>
+
+        <div class="container">
+            <h2><strong>Comments</strong></h2>
+
+            <button id="add-comment-button">Add Comment</button>
+        </div>
+
+
+
+        <br>
+
+        <div class="table-container">
+            <div id="comment_table"></div>
+        </div>
+
+
+        <button id="save-button" style="margin-top: 10px; display: none;">Save Changes</button>
+    </div>
+
+
+    <script src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+
+    <script>
+
+        // Retrieve the 'issue_id' from the URL query parameter
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const issueId = urlParams.get('issue_id');
+
+        // Display the 'issue_id' in the console
+        console.log("Issue ID:", issueId);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let isAdminMode = false;  // Declare isAdminMode and initialize it to false
+
+            console.log('Inside comment table page with issue id as', issueId);
+
+            // Get the button element by its ID
+            var button = document.getElementById('redirect-button');
+
+            // Get the button element by its ID
+            var savebutton = document.getElementById('save-button');
+
+            // By default, hide the comment submission form
+            var formContainer = document.querySelector(".comment-form-container");
+            formContainer.style.display = "none";
+
+            // Store the updated data in an array
+            var updatedData = [];
+            // Flag to track whether any changes have been made
+            var changesMade = false;
+
+            var table = new Tabulator("#comment_table", {
+                height: "100%",
+                maxheight: "800px",
+                data: [], // Initial data (can be empty)
+                layout: "fitDataFill",
+                pagination: true, //enable pagination
+                paginationMode: "local", // "remote" if fetching data from a server
+
+                // Set row heights, but this will require coding
+                // rowFormatter: function (row) {
+                //     //row - row component    
+                //     row.getElement().style.height = "200px";
+                //     row.getElement().style.maxHeight = "600px";
+                // },
+
+                columns: [
+                    {
+                        title: "Action",
+                        headerSort: false,
+                        formatter: buttonFormatter,
+                        cellClick: CommentClick,
+                    },
+                    { title: "Comment ID", field: "id", sorter: "number", width: 90, maxWidth: 100, headerFilter: "number", formatter: idFormatter, },
+
+                    {
+                        title: "Date Posted", field: "date_posted", formatter: formatDate, width: '15rem', maxWidth: 110, sorter: dateSorter,
+                        // headerFilter: "date", 
+                    },
+                    {
+                        title: "Comment", field: "comment", formatter: "textarea", formatterParams: {
+                            // Additional parameters for the 'textarea' formatter
+                            verticalNavigation: true,
+                            minHeight: 100 // Specify minheight of the textarea
+                        }, width: '33rem', maxWidth: 600, headerFilter: "input",
+                    },
+                    { title: "Uploads", field: "image_paths", formatter: imageFormatter, headerSort: false, variableHeight: true, width: 500 },
+                    {
+                        title: "Email", field: "email", formatter: "textarea", width: '18rem', maxWidth: 400, headerFilter: "input",
+                    },
+                    {
+                        title: "Remarks (HAWK TEAM)",
+                        field: "remarks",
+                        formatter: "textarea",
+                        width: 300, maxWidth: 500,
+                        headerFilter: "input",
+                        formatter: function (cell, formatterParams, onRendered) {
+                            return '<div style="white-space: pre-wrap;">' + cell.getValue() + '</div>';
+                        },
+                        sorter: "string", // Set sorter explicitly
+                        htmlOutput: false, // Disable HTML rendering for sorting,
+                    },
+
+                ],
+
+
+                // Enable pagination
+                paginationSize: 15,   // Number of rows per page
+                // paginationSizeSelector:true,
+                // Additional pagination options
+                // paginationSizeSelector:[10, 25, 50, 100, true],
+                // columnVisibility: true,  // Enable column visibility toggles
+
+                // Custom callback when column visibility changes
+                columnVisibilityChanged: function (column, visible) {
+                    console.log("Column " + column.getField() + " is now " + (visible ? "visible" : "hidden"));
+                }
+
+            });
+
+
+            function imageFormatter(cell, formatterParams) {
+                // Get the array of image URLs from the cell data
+                var imageUrls = cell.getValue();
+
+
+                // Create a container div to hold the images
+                var containerDiv = document.createElement('div');
+                containerDiv.style.display = 'flex';
+                containerDiv.style.flexWrap = 'wrap';
+
+                // Iterate through the image URLs and create img elements for each
+                for (var i = 0; i < imageUrls.length; i++) {
+                    var imageUrl = imageUrls[i];
+
+                    // Create an HTML img element with the src attribute set to the image URL
+                    var imgElement = document.createElement('img');
+                    imgElement.src = imageUrl;
+                    imgElement.style.width = '500px';
+                    imgElement.style.maxWidth = '500px'; // Adjust the maximum width as needed
+
+                    // Append the img element to the container div
+                    containerDiv.appendChild(imgElement);
+                }
+
+                var imagesToLoad = imageUrls.length;
+                var loadedImages = 0;
+
+                function imageLoaded() {
+                    console.log('(total images:', imagesToLoad, ') image num: ', loadedImages + 1);
+                    loadedImages++;
+                    if (loadedImages === imagesToLoad) {
+                        console.log('load image')
+
+                        cell.getRow().normalizeHeight();
+                    }
+                }
+
+                // Add 'load' event listeners to each img element
+                var imgElements = containerDiv.getElementsByTagName('img');
+
+                for (var j = 0; j < imgElements.length; j++) {
+                    imgElements[j].addEventListener('load', imageLoaded);
+
+
+                }
+
+                return containerDiv;
+
+            }
+
+            // Get a reference to the button element by its ID
+            var add_comment_button = document.getElementById("add-comment-button");
+
+            function CommentClick(e, cell) {
+
+                var formContainer = document.querySelector(".comment-form-container");
+                formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+                formContainer.scrollIntoView({ behavior: 'smooth' });
+
+                // Display the rowId in the paragraph
+                var rowIdDisplay = document.querySelector("#row-id-display");
+                rowIdDisplay.textContent = "Issue ID: " + issueId;
+
+                // Populate the hidden input field
+                var issueIdInput = document.querySelector('input[name="issue_id"]');
+                issueIdInput.value = issueId; // Set the value of the hidden input
+
+            };
+
+
+            add_comment_button.addEventListener("click", CommentClick);
+
+
+            function buttonFormatter(cell, formatterParams, onRendered) {
+
+                var row = cell.getRow();
+
+                return '<button class="open-comment-form-button" title="Add Comment"><i class="fas fa-plus"></i></button>';
+
+            }
+
+            function idFormatter(cell, formatterParams, onRendered, row) {
+                // Check if the row is a parent (not a nested row)
+                var row = cell.getRow();
+                var columnValue = row.getData().urgency;
+
+                if (columnValue == null) {
+                    return row.getData().id; // Change to "return "" if dont want to display comment id"
+                } else {
+                    return row.getData().id;
+                }
+
+            }
+
+            function formatDate(cell, formatterParams, onRendered) {
+                var date = cell.getValue();
+                if (date) {
+                    var parsedDate = new Date(date);
+                    var formattedDate = parsedDate.toLocaleDateString("en-GB"); // Format as dd/mm/yyyy
+                    return formattedDate;
+                }
+                return "";
+            }
+
+            // Define a custom sorter function for the column
+            function dateSorter(a, b, aRow, bRow, column, dir, sorterParams) {
+                return new Date(a) - new Date(b);
+            }
+
+
+            // Function to fetch data and display it
+            function fetchIssueData(issueId) {
+                console.log('Successfull pass into function', issueId);
+                // Make an AJAX request to your Flask route
+                fetch(`/get_issue_for_comment?issue_id=${encodeURIComponent(issueId)}`)
+
+                    .then(response => response.json())
+                    .then(data => {
+                        // Process the data and display it
+                        const issueDetailsDiv = document.getElementById("issue-details");
+                        issueDetailsDiv.innerHTML = ""; // Clear previous data
+
+                        if (data.length > 0) {
+                            const issue = data[0]; // Assuming you expect one item in the response
+                            const html = `
+                            <h2>Issue ID:${issue.id} </h2>
+                            <p><strong>Urgency:</strong> ${issue.urgency}</p>
+                            <p><strong>Date Posted:</strong> ${issue.date_posted}</p>
+                            <p><strong>Issue:</strong> ${issue.issue}</p>
+                            <p><strong>Email:</strong> ${issue.email}</p>
+                            <p><strong>Remarks:</strong> ${issue.remarks}</p>
+                            <p><strong>Date Updated:</strong> ${issue.date_updated}</p>
+                            <p><strong>Status:</strong> ${issue.status}</p>
+                            <!-- <p><strong>Expected Completion:</strong> ${issue.expected_completion}</p> -->
+                        `;
+                            issueDetailsDiv.innerHTML = html;
+                        } else {
+                            issueDetailsDiv.innerHTML = "No data found for this issue.";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                    });
+            }
+
+            fetchIssueData(issueId)
+
+
+
+            function fetchDataAndUpdateTable() {
+
+                // var issue_Id = issueId.value;
+                console.log('Successfull pass into function and grabbing data for issue: ', issueId);
+                fetch(`/get_comment?issue_id=${encodeURIComponent(issueId)}`)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        // Update table data and settings
+                        table.setData(data);
+
+                        // function adjustRowHeights() {
+                        //     table.getRows().forEach(function (row) {
+                        //         row.normalizeHeight();
+                        //     });
+                        // }
+
+
+                        table.setSort("id", "asc");
+
+                        table.redraw();
+
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+
+            }
+
+            table.on("tableBuilt", fetchDataAndUpdateTable);
+
+            table.on("load", function (cell, onRendered) {
+                cell.getRow().normalizeHeight();
+            })
+
+            // Add event listener to the admin button
+            document.getElementById('admin-mode-button').addEventListener('click', function () {
+
+                const loginForm = document.getElementById('login-form');
+
+                // Toggle form's visibility
+                loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Admin login form submit event
+            document.getElementById('admin-login-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Get password input element within admin login form
+                const passwordInput = document.querySelector('#admin-login-form input[type="password"]');
+
+                // Get value of password entered by user
+                const password = passwordInput.value;
+
+                // Clear input field
+                passwordInput.value = '';
+
+                // Send the password to the server for verification
+                fetch('/admin_login', {
+                    method: 'POST',
+                    body: new URLSearchParams({ 'password': password }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Admin mode on');
+                            isAdminMode = true;
+                            // Show admin indicator
+                            const adminIndicator = document.getElementById('admin-indicator');
+                            adminIndicator.style.display = 'block';
+
+                            // Add admin-mode class to the body element
+                            document.body.classList.add('admin-mode');
+                            // Hide the login form after successful login
+                            document.getElementById('login-form').style.display = 'none';
+                            // Reinitialize the Tabulator table with editable settings
+                            document.querySelector('#admin-login-form input[type="password"]').value = "";
+                            alert('Admin mode activated. You can now edit the table.');
+                            table.destroy(); // Destroy the existing table instance
+                            table = new Tabulator("#comment_table", {
+                                layout: "fitDataFill",
+                                height: "100%",
+
+                                columns: [
+
+                                    {
+                                        title: "Action",
+                                        headerSort: false,
+                                        formatter: buttonFormatter, // Custom formatter for button
+                                        cellClick: CommentClick,
+                                    },
+                                    { title: "Comment ID", field: "id", sorter: "number", width: 90, maxWidth: 100, headerFilter: "number", formatter: idFormatter, },
+
+                                    {
+                                        title: "Date Posted", field: "date_posted", formatter: formatDate, width: '15rem', maxWidth: 110, sorter: dateSorter,
+                                        // headerFilter: "date", 
+                                    },
+                                    {
+                                        title: "Comment", field: "comment", formatter: "textarea", formatterParams: {
+                                            verticalNavigation: true,
+                                            minHeight: 100 // Specify the minimum height of the textarea
+                                        }, width: '33rem', headerFilter: "input",
+                                    },
+                                    { title: "Uploads", field: "image_paths", formatter: imageFormatter, headerSort: false, variableHeight: true, width: 500 },
+                                    { title: "Email", field: "email", formatter: "textarea", width: '18rem', maxWidth: 400, headerFilter: "input", },
+                                    {
+                                        title: "Remarks (HAWK TEAM)", field: "remarks", editor: "input", headerFilter: "input",
+                                        formatter: function (cell, formatterParams, onRendered) {
+                                            return '<div style="white-space: pre-wrap;">' + cell.getValue() + '</div>';
+                                        },
+                                        sorter: "string", // Set the sorter explicitly
+                                        htmlOutput: false, // Disable HTML rendering for sorting,
+                                        cellEdited: handleCellEdit, width: 300, maxWidth: 400, headerFilter: "input",
+                                    },
+
+                                ],
+
+                                // Enable pagination
+                                pagination: "remote", // "remote" for fetching data from a server
+                                paginationSize: 15,   // Number of rows per page
+
+                                // Additional pagination options
+                                // paginationSizeSelector: [15, 25, 50, 100], // Dropdown to select page size
+
+
+                            });
+                            // Function to handle cell edit
+                            function handleCellEdit(cell) {
+                                console.log('Cell edited');
+                                const field = cell.getField();
+                                const oldValue = cell.getOldValue();
+                                const newValue = cell.getValue();
+
+                                if (newValue !== oldValue) {
+                                    // Get the row data and add to the updatedData array
+                                    const rowData = cell.getRow().getData();
+                                    rowData[field] = newValue;
+                                    // rowData.date_updated = new Date().toISOString(); // Set the "Updated" 
+                                    updatedData.push(rowData);
+                                    changesMade = true; // Set the flag if values are different
+
+                                    savebutton.style.display = 'block';
+                                }
+                            }
+
+
+                            table.on("tableBuilt", fetchDataAndUpdateTable);
+                        } else {
+                            // Display an error message for incorrect password
+                            alert('Incorrect password. Please try again.');
+                        }
+                    })
+
+                    .catch(error => console.error('Error during admin login:', error));
+            });
+
+            savebutton.addEventListener('click', function () {
+                if (changesMade) {
+
+                    updatedData.issue_id = issueId.value;
+
+                    fetch('/update_comments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                           
+                            if (data.success) {
+                                // Refresh the table to reflect the changes
+                                table.redraw(true);
+                                alert('Changes saved successfully.');
+                                updatedData = [];
+                                changesMade = false; // Reset the flag after changes are saved
+                                savebutton.style.display = 'none'; // Hide "Save Changes" button
+                            } else {
+                                alert('Error saving changes for Comment Table.');
+                            }
+                        })
+                        .catch(error => console.error('Error during data save:', error));
+                }
+            });
+
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("open-comment-form-button")) {
+                    var rowId = e.target.getAttribute("data-row-id");
+
+                    // Toggle visibility of the form container
+                    var formContainer = document.querySelector(".comment-form-container");
+                    // formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+                    formContainer.style.display = "block"; // Set the form container to be visible
+
+                    // Set the value of the hidden input field "issue_id"
+                    var issueIdInput = formContainer.querySelector("[name='issue_id']");
+                    issueIdInput.value = rowId;
+
+                    var form = document.querySelector("#comment-form");
+
+                    form.addEventListener("submit", function (event) {
+                        event.preventDefault(); // Prevent default form submission behavior
+
+                        var formData = new FormData(form); // Use FormData to include all form fields, including  file input
+
+                        // Get all selected image files from the input field
+                        var imageInput = document.querySelector("[name='image']");
+                        for (var i = 0; i < imageInput.files.length; i++) {
+                            formData.append("images[]", imageInput.files[i]);
+                        }
+
+                        // Send form data to Flask backend using "multipart/form-data" encoding
+                        fetch("/submitComment", {
+                            method: "POST",
+                            body: formData, 
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                               
+                                console.log("Response from server:", data);
+                                
+                                form.reset();
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                            });
+                    });
+
+
+                }
+
+            });
+
+            // Handle cancel button click
+            var commentCancelButton = document.getElementById("comment-cancel-button");
+            commentCancelButton.addEventListener("click", function () {
+                var formContainer = document.querySelector(".comment-form-container");
+                formContainer.style.display = "none";
+
+            });
+
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>

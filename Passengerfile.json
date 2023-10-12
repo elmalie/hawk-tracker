@@ -1,0 +1,9 @@
+{
+  "app_type": "wsgi",
+  "startup_file": "passenger_wsgi.py",
+  "python":  "/home/netan-celcom-my/miniconda3/envs/hawk-tracker/bin/python3.11",
+  "environment": "production",
+  "port": 5002,
+  "daemonize": false,
+  "user": "netan-celcom-my"
+}

@@ -1,0 +1,41 @@
+[ N 2023-08-09 17:09:40.9457 2686135/T1 age/Wat/WatchdogMain.cpp:1377 ]: Starting Passenger watchdog...
+[ N 2023-08-09 17:09:40.9624 2686138/T1 age/Cor/CoreMain.cpp:1340 ]: Starting Passenger core...
+[ N 2023-08-09 17:09:40.9626 2686138/T1 age/Cor/CoreMain.cpp:256 ]: Passenger core running in multi-application mode.
+[ N 2023-08-09 17:09:41.0237 2686138/T1 age/Cor/CoreMain.cpp:1015 ]: Passenger core online, PID 2686138
+App 2686236 output: /bin/sh: /home/netan-celcom-my/elmalie/hawk-tracker/{"executable"=>"/home/netan-celcom-my/miniconda3/envs/hawk-tracker/bin/python"}: No such file or directory
+[ E 2023-08-09 17:09:43.1945 2686138/T1n age/Cor/App/Implementation.cpp:221 ]: Could not spawn process for application /home/netan-celcom-my/elmalie/hawk-tracker: The application process exited prematurely.
+  Error ID: 2755f530
+  Error details saved to: /tmp/passenger-error-xCS94Z.html
+
+[ E 2023-08-09 17:09:43.1983 2686138/T8 age/Cor/Con/CheckoutSession.cpp:283 ]: [Client 1-1] Cannot checkout session because a spawning error occurred. The identifier of the error is 2755f530. Please see earlier logs for details about the error.
+[ N 2023-08-09 17:09:43.8656 2686138/T5 age/Cor/SecurityUpdateChecker.h:519 ]: Security update check: no update found (next check in 24 hours)
+App 2687144 output: /bin/sh: /home/netan-celcom-my/elmalie/hawk-tracker/{"executable"=>"/home/netan-celcom-my/miniconda3/envs/hawk-tracker/bin/python"}: No such file or directory
+[ E 2023-08-09 17:12:42.8347 2686138/T1s age/Cor/App/Implementation.cpp:221 ]: Could not spawn process for application /home/netan-celcom-my/elmalie/hawk-tracker: The application process exited prematurely.
+  Error ID: 407860eb
+  Error details saved to: /tmp/passenger-error-3Gc28q.html
+
+[ E 2023-08-09 17:12:42.8384 2686138/Ta age/Cor/Con/CheckoutSession.cpp:283 ]: [Client 2-1] Cannot checkout session because a spawning error occurred. The identifier of the error is 407860eb. Please see earlier logs for details about the error.
+App 2687337 output: /bin/sh: /home/netan-celcom-my/elmalie/hawk-tracker/{"executable"=>"/home/netan-celcom-my/miniconda3/envs/hawk-tracker/bin/python"}: No such file or directory
+[ E 2023-08-09 17:13:09.8993 2686138/T1z age/Cor/App/Implementation.cpp:221 ]: Could not spawn process for application /home/netan-celcom-my/elmalie/hawk-tracker: The application process exited prematurely.
+  Error ID: 5d7a63e7
+  Error details saved to: /tmp/passenger-error-0p5Uo9.html
+
+App 2688086 output: /bin/sh: /home/netan-celcom-my/elmalie/hawk-tracker/{"executable"=>"/home/netan-celcom-my/miniconda3/envs/hawk-tracker/bin/python"}: No such file or directory
+[ E 2023-08-09 17:16:23.5291 2686138/T26 age/Cor/App/Implementation.cpp:221 ]: Could not spawn process for application /home/netan-celcom-my/elmalie/hawk-tracker: The application process exited prematurely.
+  Error ID: 44912485
+  Error details saved to: /tmp/passenger-error-R9y230.html
+
+App 2688174 output: /bin/sh: /home/netan-celcom-my/elmalie/hawk-tracker/{"executable"=>"/home/netan-celcom-my/miniconda3/envs/hawk-tracker/bin/python"}: No such file or directory
+[ E 2023-08-09 17:16:29.6374 2686138/T2b age/Cor/App/Implementation.cpp:221 ]: Could not spawn process for application /home/netan-celcom-my/elmalie/hawk-tracker: The application process exited prematurely.
+  Error ID: 009f6064
+  Error details saved to: /tmp/passenger-error-8yQds4.html
+
+[ E 2023-08-09 17:16:29.6408 2686138/Tc age/Cor/Con/CheckoutSession.cpp:283 ]: [Client 3-1] Cannot checkout session because a spawning error occurred. The identifier of the error is 009f6064. Please see earlier logs for details about the error.
+[ W 2023-08-09 17:22:11.5423 2686138/T1 age/Cor/CoreMain.cpp:1236 ]: Watchdog seems to be killed; forcing shutdown of all subprocesses
+
+[ N 2023-08-09 17:22:11.5425 2686138/T8 age/Cor/CoreMain.cpp:671 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+2023/08/09 17:29:23 [alert] 2686156#0: worker process 2686160 exited on signal 9
+2023/08/09 17:29:23 [alert] 2689938#0: could not create /tmp/passenger.sBLAKa6/web_server_info/control_process.pid (2: No such file or directory)
+2023/08/09 17:34:03 [alert] 2686156#0: worker process 2689938 exited on signal 9
+2023/08/09 17:34:03 [alert] 2690206#0: could not create /tmp/passenger.sBLAKa6/web_server_info/control_process.pid (2: No such file or directory)
+2023/08/09 17:35:08 [alert] 2690416#0: could not create /tmp/passenger.sBLAKa6/web_server_info/control_process.pid (2: No such file or directory)
